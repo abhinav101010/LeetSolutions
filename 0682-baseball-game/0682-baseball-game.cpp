@@ -1,29 +1,28 @@
+#include <vector>
+#include <string>
+#include <stack>
+using namespace std;
+
 class Solution {
 public:
-    int calPoints(vector<string>& operations) {
-        stack<int> scores;
-        for (const auto& opr : operations) {
-            if (opr == "C") {
-                scores.pop();
-            } else if (opr == "D") {
-                int last = scores.top();
-                scores.push(last * 2);
-            } else if (opr == "+") {
-                int last = scores.top();
-                scores.pop();
-                int prev = scores.top();
-                int sum = last + prev;
-                scores.push(last);
-                scores.push(sum);
+    int calPoints(vector<string>& ops) {
+        stack<int> st;
+        for (const auto &op : ops) {
+            if (op == "+") {
+                int top = st.top(); st.pop();
+                int newTop = top + st.top();
+                st.push(top);
+                st.push(newTop);
+            } else if (op == "D") {
+                st.push(st.top() * 2);
+            } else if (op == "C") {
+                st.pop();
             } else {
-                scores.push(stoi(opr));
+                st.push(stoi(op));
             }
         }
-        int total = 0;
-        while (!scores.empty()) {
-            total += scores.top();
-            scores.pop();
-        }
-        return total;
+        int res = 0;
+        while (!st.empty()) { res += st.top(); st.pop(); }
+        return res;
     }
 };

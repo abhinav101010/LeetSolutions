@@ -1,0 +1,14 @@
+# Delete Duplicate Emails - SQL solution
+# DELETE p1 FROM Person p1
+# INNER JOIN Person p2
+# WHERE p1.Email = p2.Email AND p1.Id > p2.Id;
+
+class Solution:
+    def deleteDuplicateEmails(self):
+        """
+        SQL:
+        DELETE p1 FROM Person p1
+        INNER JOIN Person p2
+        WHERE p1.Email = p2.Email AND p1.Id > p2.Id;
+        """
+        pass

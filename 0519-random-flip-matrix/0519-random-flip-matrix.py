@@ -1,0 +1,20 @@
+import random
+from typing import List
+
+class Solution:
+    def __init__(self, m: int, n: int):
+        self.m = m
+        self.n = n
+        self.total = m * n
+        self.map = {}
+
+    def flip(self) -> List[int]:
+        rand = random.randint(0, self.total - 1)
+        self.total -= 1
+        idx = self.map.get(rand, rand)
+        self.map[rand] = self.map.get(self.total, self.total)
+        return [idx // self.n, idx % self.n]
+
+    def reset(self) -> None:
+        self.total = self.m * self.n
+        self.map.clear()

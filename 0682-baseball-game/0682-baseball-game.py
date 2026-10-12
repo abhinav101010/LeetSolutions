@@ -1,15 +1,15 @@
+from typing import List
+
 class Solution:
-    def calPoints(self, operations: List[str]) -> int:
-        scores = []
-        for opr in operations:
-            if opr == "C":
-                scores.pop()
-                continue
-            if opr == "D":
-                scores.append(2*scores[-1])
-                continue
-            if opr == "+":
-                scores.append(scores[-2]+scores[-1])
-                continue
-            scores.append(int(opr))
-        return sum(scores)
+    def calPoints(self, ops: List[str]) -> int:
+        stack = []
+        for op in ops:
+            if op == '+':
+                stack.append(stack[-1] + stack[-2])
+            elif op == 'D':
+                stack.append(stack[-1] * 2)
+            elif op == 'C':
+                stack.pop()
+            else:
+                stack.append(int(op))
+        return sum(stack)
