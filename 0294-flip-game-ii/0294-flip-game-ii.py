@@ -1,0 +1,17 @@
+class Solution:
+    def canWin(self, currentState: str) -> bool:
+        memo = {}
+        
+        def dfs(s):
+            if s in memo:
+                return memo[s]
+            for i in range(len(s) - 1):
+                if s[i] == '+' and s[i + 1] == '+':
+                    new_s = s[:i] + '--' + s[i + 2:]
+                    if not dfs(new_s):
+                        memo[s] = True
+                        return True
+            memo[s] = False
+            return False
+        
+        return dfs(currentState)
