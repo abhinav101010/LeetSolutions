@@ -1,62 +1,47 @@
-import re
-
 class Solution:
     def isValid(self, code: str) -> bool:
-        # Check if the entire code is wrapped in a valid closed tag
-        if not code.startswith('<') or not code.endswith('>'):
+        n = len(code)
+        if n == 0 or code[0] != '<':
             return False
-        
-        i = 1
-        if i >= len(code) or code[i] == '/':
-            return False
-        
-        # Parse tag name
-        tag_name = ''
-        while i < len(code) and code[i] != '>':
-            tag_name += code[i]
-            i += 1
-        
-        if i >= len(code) or not tag_name or len(tag_name) > 9 or not tag_name.isupper():
-            return False
-        
-        if code[i] != '>':
-            return False
-        
-        i += 1
-        
-        # Parse content
-        content = code[i:-len(tag_name)-3]  # remove closing tag
-        
-        # Check for invalid tags in content
-        j = 0
-        while j < len(content):
-            if content[j] == '<':
-                if j + 1 < len(content) and content[j+1] == '!':
+        stack = []
+        i = 0
+        seen_tag = False
+        while i < n:
+            if code[i] == '<':
+                if i + 1 >= n:
+                    return False
+                if code[i+1] == '!':
                     # CDATA
-                    if not content.startswith('<![CDATA[', j):
+                    if not code.startswith('<![CDATA[', i):
                         return False
-                    end = content.find(']]>', j + 9)
-                    if end == -1:
+                    j = code.find(']]>', i + 9)
+                    if j == -1:
                         return False
-                    j = end + 3
-                elif j + 1 < len(content) and content[j+1] == '/':
-                    # Closing tag
-                    return False  # No closing tags allowed in content for single root
+                    i = j + 3
+                elif code[i+1] == '/':
+                    # end tag
+                    j = code.find('>', i + 2)
+                    if j == -1:
+                        return False
+                    tag = code[i+2:j]
+                    if not (1 <= len(tag) <= 9 and all(c.isupper() for c in tag)):
+                        return False
+                    if not stack or stack.pop() != tag:
+                        return False
+                    seen_tag = True
+                    if not stack and j + 1 != n:
+                        return False
+                    i = j + 1
                 else:
-                    # Opening tag
-                    end = content.find('>', j)
-                    if end == -1:
+                    # start tag
+                    j = code.find('>', i + 1)
+                    if j == -1:
                         return False
-                    inner_tag = content[j+1:end]
-                    if not inner_tag or len(inner_tag) > 9 or not inner_tag.isupper():
+                    tag = code[i+1:j]
+                    if not (1 <= len(tag) <= 9 and all(c.isupper() for c in tag)):
                         return False
-                    j = end + 1
+                    stack.append(tag)
+                    i = j + 1
             else:
-                j += 1
-        
-        # Check closing tag
-        closing = f"</{tag_name}>"
-        if not code.endswith(closing):
-            return False
-        
-        return True
+                i += 1
+        return not stack and seen_tag
