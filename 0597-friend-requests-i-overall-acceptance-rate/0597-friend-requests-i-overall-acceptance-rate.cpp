@@ -1,47 +1,51 @@
-#include <iostream>
 #include <vector>
 #include <string>
-#include <unordered_set>
+#include <set>
 #include <algorithm>
+#include <cmath>
+#include <tuple>
 using namespace std;
 
 struct FriendRequest {
-    int senderId;
-    int sendToId;
+    int sender_id;
+    int send_to_id;
+    string request_date;
 };
 
 struct RequestAccepted {
-    int requesterId;
-    int accepterId;
+    int requester_id;
+    int accepter_id;
+    string accept_date;
 };
 
 class Solution {
 public:
-    double friendRequests(int n, vector<FriendRequest>& requests, vector<RequestAccepted>& accepts) {
-        // Build set of unique accepted pairs (or count unique)
-        // Count total requests (unique sender, sendTo pairs?)
-        // Count accepted (unique requester, accepter pairs?)
-        // Leetcode states: "Note that, even if a request is made multiple times, it only counts once. 
-        // If a request is accepted more than once, it only counts once."
-        unordered_set<string> requestSet;
+    string acceptanceRate(vector<FriendRequest>& requests, vector<RequestAccepted>& accepted) {
+        set<pair<int,int>> reqSet;
         for (const auto& r : requests) {
-            requestSet.insert(to_string(r.senderId) + "," + to_string(r.sendToId));
+            // store unique pairs (sender, receiver) - order matters as given
+            reqSet.insert({r.sender_id, r.send_to_id});
         }
-        unordered_set<string> acceptSet;
-        for (const auto& a : accepts) {
-            acceptSet.insert(to_string(a.requesterId) + "," + to_string(a.accepterId));
+        set<pair<int,int>> accSet;
+        for (const auto& a : accepted) {
+            accSet.insert({a.requester_id, a.accepter_id});
         }
-        if (requestSet.empty()) {
-            return 0.0;
-        }
-        // Count how many requests were accepted - intersection
-        int acceptedCount = 0;
-        for (const auto& req : requestSet) {
-            if (acceptSet.find(req) != acceptSet.end()) {
-                acceptedCount++;
+        // count accepted that are in requests? - "acceptance rate = number of (requester_id, accepter_id) accepted / number of (sender_id, send_to_id) requested"
+        // they might not all match - but count distinct pairs in each
+        long long totalReq = reqSet.size();
+        if (totalReq == 0) return "0.00";
+        long long totalAcc = 0;
+        for (const auto& p : accSet) {
+            if (reqSet.find(p) != reqSet.end()) {
+                totalAcc++;
             }
         }
-        double rate = (double)acceptedCount / (double)requestSet.size();
-        return rate;
+        double rate = (double)totalAcc / (double)totalReq;
+        // round to 2 decimal places
+        rate = round(rate * 100.0) / 100.0;
+        // format to 2 decimals
+        char buf[10];
+        sprintf(buf, "%.2f", rate);
+        return string(buf);
     }
 };

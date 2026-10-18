@@ -1,4 +1,7 @@
-import pandas as pd
-
-def selectData(students: pd.DataFrame) -> pd.DataFrame:
-    return students[students['student_id'] == 101][['name', 'age']]
+class Solution:
+    def selectData(self, nums, target):
+        res = []
+        for i, v in enumerate(nums):
+            if v == target:
+                res.append(i)
+        return res

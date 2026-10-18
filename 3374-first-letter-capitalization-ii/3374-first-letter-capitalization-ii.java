@@ -1,5 +1,7 @@
-// 3374-first-letter-capitalization-ii
 import java.util.*;
 
 class Solution {
+    public List<String> solve(List<String> input) {
+        return new ArrayList<>(input);
+    }
 }
