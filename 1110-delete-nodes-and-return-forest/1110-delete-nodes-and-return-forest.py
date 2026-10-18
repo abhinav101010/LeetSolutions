@@ -1,0 +1,12 @@
+class Solution:
+    def delNodes(self, root, to_delete):
+        to=set(to_delete); res=[]
+        def dfs(node, is_root):
+            if not node: return None
+            deleted=node.val in to
+            if is_root and not deleted: res.append(node)
+            node.left=dfs(node.left, deleted)
+            node.right=dfs(node.right, deleted)
+            return None if deleted else node
+        dfs(root,True)
+        return res

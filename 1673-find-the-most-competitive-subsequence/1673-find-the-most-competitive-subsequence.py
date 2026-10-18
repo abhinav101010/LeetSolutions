@@ -1,0 +1,10 @@
+class Solution:
+    def mostCompetitive(self, nums, k):
+        stk = []
+        n = len(nums)
+        for i, v in enumerate(nums):
+            while stk and stk[-1] > v and len(stk) + n - i > k:
+                stk.pop()
+            if len(stk) < k:
+                stk.append(v)
+        return stk

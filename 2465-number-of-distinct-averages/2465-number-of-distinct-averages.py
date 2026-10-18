@@ -1,0 +1,4 @@
+class Solution:
+    def distinctAverages(self, nums):
+        nums.sort()
+        return len(set(nums[i] + nums[-i - 1] for i in range(len(nums) >> 1)))
